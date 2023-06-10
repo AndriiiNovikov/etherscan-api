@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "abi-decoder": "^2.4.0",
+    "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
+    "csv-writer": "^1.6.0",
+    "etherscan-api": "^10.3.0",
+    "fs": "^0.0.1-security",
+    "sync-request": "^6.1.0",
+    "web3": "^1.10.0"
+  }
+}
