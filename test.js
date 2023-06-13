@@ -1,34 +1,32 @@
-const request = require("sync-request");
+//  JavaScript-скрипта, который использует axios для выполнения HTTP-запроса к API Etherscan
+//  и экспортирует полученные данные в формате JSON:
+
 const axios = require("axios");
-// Ваш API-ключ etherscan.io
+const fs = require("fs");
+
+// const walletAddress = "0x9Db7378614d8d9D7149c4eE4763F88c38F9B1517";
 const apiKey = "CCWD3ZMYTCC5PPPBMKDIQ7TWQMN4FB167T";
-//Дати початку та кінця парсингу
-const startDate = "2023-05-10T00:00:00Z";
+const transactionHash =  "0x18d35e664372190f0b16dada83b06f892eea334e07198e78f34e2dde34f7acea";
 
-//Function for converting date string to UNIX format
-function convertDateToUnixTime(dateString) {
-  return new Date(dateString).getTime() / 1000;
-}
+// const apiUrl = `https://api.etherscan.io/api?module=transaction&action=gettxreceiptstatus&txhash=${transactionHash}&apikey=${apiKey}`;
+const apiUrl = `https://api.etherscan.io/api?module=proxy&action=eth_getTransactionReceipt&txhash=${transactionHash}&apikey=${apiKey};`
 
-const startDateUnix = convertDateToUnixTime(startDate);
+axios
+  .get(apiUrl)
+  .then((response) => {
+    const transactions = response.data.result;
+    console.log(transactions);
 
-function getBlockNumberByTime(timestamp) {
-  const url = `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${apiKey}`;
+    // Экспорт данных в JSON файл
+    fs.writeFileSync(
+      "tmp/transactionReseipt.json",
+      JSON.stringify(transactions, null, 2)
+    );
 
-  return axios
-    .get(url)
-    .then((response) => {
-      const data = response.data;
-      const blockNumber = data.result;
-      return blockNumber;
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
-
-// Example usage
-getBlockNumberByTime(startDateUnix)
-  .then((blockNumber) => {
-  console.log("Block Number:", blockNumber);
-});
+    console.log(
+      "Данные о транзакциях успешно сохранены в файл transactionReseipt.json"
+    );
+  })
+  .catch((error) => {
+    console.error("Произошла ошибка при получении данных:", error.message);
+  });
